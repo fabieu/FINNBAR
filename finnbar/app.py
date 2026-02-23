@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from rich.text import Text
 from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
@@ -23,20 +22,21 @@ from textual.containers import Container, Horizontal, Vertical
 
 from finnbar import api
 
-if TYPE_CHECKING:
-    pass
-
 _COUNTRIES = api.get_country_codes()
 _COUNTRY_OPTIONS: list[tuple[str, str]] = [
     (f"{code.upper()} – {api.get_country_name(code)}", code)
     for code in _COUNTRIES
 ]
 
-_PROBABILITY_ICONS = {
-    "HIGH_IN_STOCK": "🟢",
-    "LOW_IN_STOCK": "🟡",
-    "OUT_OF_STOCK": "🔴",
+# Human-readable availability labels with associated Rich color styles
+_PROBABILITY_DISPLAY: dict[str, tuple[str, str]] = {
+    "HIGH_IN_STOCK": ("🟢 High in stock", "bold green"),
+    "LOW_IN_STOCK": ("🟡 Low in stock", "bold yellow"),
+    "OUT_OF_STOCK": ("🔴 Out of stock", "bold red"),
 }
+_PROBABILITY_FALLBACK: tuple[str, str] = ("⚪ Unknown", "dim")
+# Probability keys that mean zero items available for cash-and-carry
+_ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
 
 
 class FinnbarApp(App[None]):
@@ -47,12 +47,11 @@ class FinnbarApp(App[None]):
     CSS_PATH = "app.tcss"
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit"),
-        Binding("ctrl+s", "search_stores", "Search Stores", show=True),
         Binding("ctrl+k", "check_stock", "Check Stock", show=True),
         Binding("ctrl+x", "clear", "Clear", show=True),
     ]
 
-    _state: reactive[str] = reactive("idle")  # idle | loading | stores | stock | error
+    _state: reactive[str] = reactive("idle")  # idle | loading | stock | error
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -69,30 +68,41 @@ class FinnbarApp(App[None]):
                     value=_COUNTRY_OPTIONS[0][1],
                 )
 
+                yield Label("Store")
+                yield Select(
+                    [],
+                    prompt="All stores",
+                    id="store-select",
+                    allow_blank=True,
+                )
+
                 yield Label("Product ID(s)")
                 yield Input(
                     placeholder="e.g. 40299687, S69022537",
                     id="product-input",
                 )
 
-                yield Button("🏪  Search Stores", id="search-stores-btn", variant="primary")
-                yield Button("📦  Check Stock", id="check-stock-btn", variant="success")
-                yield Button("🗑️  Clear", id="clear-btn")
+                yield Button("Check Stock", id="check-stock-btn", variant="success")
+                yield Button("Clear", id="clear-btn")
 
             # ── Main area ──────────────────────────────────────────────
             with Container(id="main-area"):
                 yield Static(
-                    "Select a country and press [b]Search Stores[/b] to list stores,\n"
-                    "or enter a product ID and press [b]Check Stock[/b] to view availability.",
+                    "Select a country and optional store,\n"
+                    "then enter a product ID and press\n"
+                    "[b]Check Stock[/b] to view availability.",
                     id="empty-state",
                 )
 
         yield Footer()
 
-    # ── Actions ────────────────────────────────────────────────────────
+    # ── Lifecycle ──────────────────────────────────────────────────────
 
-    def action_search_stores(self) -> None:
-        self.query_one("#search-stores-btn", Button).press()
+    def on_mount(self) -> None:
+        """Populate store dropdown for the initially selected country."""
+        self._update_store_select(_COUNTRY_OPTIONS[0][1])
+
+    # ── Actions ────────────────────────────────────────────────────────
 
     def action_check_stock(self) -> None:
         self.query_one("#check-stock-btn", Button).press()
@@ -100,12 +110,15 @@ class FinnbarApp(App[None]):
     def action_clear(self) -> None:
         self.query_one("#clear-btn", Button).press()
 
-    # ── Button handler ─────────────────────────────────────────────────
+    # ── Event handlers ─────────────────────────────────────────────────
+
+    def on_select_changed(self, event: Select.Changed) -> None:
+        """Repopulate the store dropdown whenever the country changes."""
+        if event.select.id == "country-select" and event.value is not Select.NULL:
+            self._update_store_select(str(event.value))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "search-stores-btn":
-            self._do_search_stores()
-        elif event.button.id == "check-stock-btn":
+        if event.button.id == "check-stock-btn":
             self._do_check_stock()
         elif event.button.id == "clear-btn":
             self._do_clear()
@@ -118,11 +131,33 @@ class FinnbarApp(App[None]):
             return None
         return str(sel.value)
 
+    def _selected_store(self) -> str | None:
+        """Return selected store bu_code, or None for all stores."""
+        sel = self.query_one("#store-select", Select)
+        if sel.value is Select.NULL:
+            return None
+        return str(sel.value)
+
     def _product_ids(self) -> list[str]:
         raw = self.query_one("#product-input", Input).value.strip()
         if not raw:
             return []
-        return [p.strip() for p in raw.split(",") if p.strip()]
+        # Normalize: strip dots (e.g. 091.761.65 → 09176165)
+        ids = []
+        for token in raw.split(","):
+            normalized = token.strip().replace(".", "")
+            if normalized:
+                ids.append(normalized)
+        return ids
+
+    def _update_store_select(self, country_code: str) -> None:
+        """Repopulate the store Select with stores for the given country."""
+        stores = api.get_stores(country_code)
+        options = [
+            (f"{s.bu_code} – {s.name}", s.bu_code)
+            for s in sorted(stores, key=lambda s: s.name)
+        ]
+        self.query_one("#store-select", Select).set_options(options)
 
     def _show_loading(self) -> None:
         """Replace main area content with loading indicator."""
@@ -148,49 +183,11 @@ class FinnbarApp(App[None]):
     def _do_clear(self) -> None:
         self.query_one("#product-input", Input).value = ""
         self._show_empty(
-            "Select a country and press [b]Search Stores[/b] to list stores,\n"
-            "or enter a product ID and press [b]Check Stock[/b] to view availability."
+            "Select a country and optional store,\n"
+            "then enter a product ID and press\n"
+            "[b]Check Stock[/b] to view availability."
         )
         self.notify("Cleared.", timeout=2)
-
-    # ── Store search ───────────────────────────────────────────────────
-
-    def _do_search_stores(self) -> None:
-        country = self._selected_country()
-        if not country:
-            self.notify("Please select a country first.", severity="warning")
-            return
-        self._show_loading()
-        self._fetch_stores(country)
-
-    @work(thread=True)
-    def _fetch_stores(self, country_code: str) -> None:
-        stores = api.get_stores(country_code)
-        self.call_from_thread(self._render_stores, stores, country_code)
-
-    def _render_stores(self, stores: list[api.Store], country_code: str) -> None:
-        main = self.query_one("#main-area")
-        for child in list(main.children):
-            child.remove()
-
-        if not stores:
-            self._show_empty(f"No stores found for country code '{country_code}'.")
-            return
-
-        table = DataTable(id="results-table", zebra_stripes=True, cursor_type="row")
-        main.mount(table)
-        table.add_columns("Store ID", "Name", "Country", "Country Code", "Lat", "Lon")
-        for s in stores:
-            lat = f"{s.coordinates[1]:.4f}" if len(s.coordinates) >= 2 else ""
-            lon = f"{s.coordinates[0]:.4f}" if len(s.coordinates) >= 2 else ""
-            table.add_row(s.bu_code, s.name, s.country, s.country_code.upper(), lat, lon)
-
-        country_name = api.get_country_name(country_code)
-        self.notify(
-            f"Found {len(stores)} store(s) in {country_name}.",
-            title="Stores",
-            timeout=4,
-        )
 
     # ── Stock check ────────────────────────────────────────────────────
 
@@ -205,13 +202,16 @@ class FinnbarApp(App[None]):
                 "Please enter at least one product ID.", severity="warning"
             )
             return
+        bu_code = self._selected_store()
         self._show_loading()
-        self._fetch_stock(country, product_ids)
+        self._fetch_stock(country, product_ids, bu_code)
 
     @work(thread=True)
-    def _fetch_stock(self, country_code: str, product_ids: list[str]) -> None:
+    def _fetch_stock(
+        self, country_code: str, product_ids: list[str], bu_code: str | None = None
+    ) -> None:
         try:
-            results = api.check_availability(country_code, product_ids)
+            results = api.check_availability(country_code, product_ids, bu_code)
             self.call_from_thread(self._render_stock, results, country_code)
         except Exception as exc:  # noqa: BLE001
             self.call_from_thread(
@@ -244,14 +244,15 @@ class FinnbarApp(App[None]):
             "Updated",
         )
         for r in results:
-            icon = _PROBABILITY_ICONS.get(r.probability, "⚪")
-            stock_str = str(r.stock) if r.probability != "OUT_OF_STOCK" else "0"
+            label, color = _PROBABILITY_DISPLAY.get(r.probability, _PROBABILITY_FALLBACK)
+            avail_cell = Text(label, style=color)
+            stock_str = str(r.stock) if r.probability not in _ZERO_STOCK_KEYS else "0"
             table.add_row(
                 r.product_id,
                 r.store_name,
                 f"{r.country} ({r.country_code.upper()})",
                 stock_str,
-                f"{icon} {r.probability}",
+                avail_cell,
                 r.updated_at,
             )
 

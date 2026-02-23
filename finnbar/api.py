@@ -85,12 +85,18 @@ def get_all_stores() -> list[Store]:
     ]
 
 
-def check_availability(country_code: str, product_ids: list[str]) -> list[StockInfo]:
-    """Check product availability across all stores in a country.
+def check_availability(
+    country_code: str,
+    product_ids: list[str],
+    bu_code: str | None = None,
+) -> list[StockInfo]:
+    """Check product availability across stores in a country.
 
     Args:
         country_code: Two-letter country code (e.g. 'de', 'us').
         product_ids: List of IKEA product IDs to check.
+        bu_code: Optional store ID to filter results. When omitted, all stores
+            in the country are returned.
 
     Returns:
         List of StockInfo objects with availability data.
@@ -164,6 +170,8 @@ def check_availability(country_code: str, product_ids: list[str]) -> list[StockI
             )
         )
 
-    # Sort by store name then product id
+    # Sort by store name then product id, and optionally filter by store
+    if bu_code:
+        results = [r for r in results if r.bu_code == bu_code]
     results.sort(key=lambda x: (x.store_name, x.product_id))
     return results
