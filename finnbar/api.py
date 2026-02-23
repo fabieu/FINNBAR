@@ -153,9 +153,15 @@ def check_availability(
                     avail.get("probability", {}).get("thisDay", {}).get("messageType", "")
                 )
                 updated_at = avail.get("updateDateTime", "")
-                # Trim to date only for display
+                # Format datetime for display:
+                #   "2024-01-15T04:14:05.302Z" → "2024-01-15 04:14"
+                #   date-only string  → unchanged
                 if "T" in updated_at:
-                    updated_at = updated_at.split("T")[0]
+                    date_part, time_part = updated_at.split("T", 1)
+                    # Take up to 5 chars of the time ("HH:MM"); fall back to
+                    # the full time string if it's shorter than expected.
+                    time_short = time_part[:5] if len(time_part) >= 5 else time_part
+                    updated_at = f"{date_part} {time_short}"
 
         results.append(
             StockInfo(

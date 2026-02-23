@@ -2,6 +2,7 @@
 
 Screen {
     background: $surface;
+    overflow: hidden hidden;
 }
 
 #app-grid {
@@ -38,8 +39,7 @@ Screen {
     margin-bottom: 1;
     background: #00a651;
     color: white;
-    border-top: tall #3dc97a;
-    border-bottom: tall #007838;
+    border: none;
 }
 
 #check-stock-btn:hover {
@@ -49,6 +49,7 @@ Screen {
 #clear-btn {
     width: 100%;
     height: 3;
+    border: none;
 }
 
 #main-area {

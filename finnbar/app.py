@@ -30,11 +30,11 @@ _COUNTRY_OPTIONS: list[tuple[str, str]] = [
 
 # Human-readable availability labels with associated Rich color styles
 _PROBABILITY_DISPLAY: dict[str, tuple[str, str]] = {
-    "HIGH_IN_STOCK": ("🟢 High in stock", "bold green"),
-    "LOW_IN_STOCK": ("🟡 Low in stock", "bold yellow"),
-    "OUT_OF_STOCK": ("🔴 Out of stock", "bold red"),
+    "HIGH_IN_STOCK": ("High in stock", "bold green"),
+    "LOW_IN_STOCK": ("Low in stock", "bold yellow"),
+    "OUT_OF_STOCK": ("Out of stock", "bold red"),
 }
-_PROBABILITY_FALLBACK: tuple[str, str] = ("⚪ Unknown", "dim")
+_PROBABILITY_FALLBACK: tuple[str, str] = ("Unknown", "dim")
 # Probability keys that mean zero items available for cash-and-carry
 _ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
 
@@ -66,6 +66,7 @@ class FinnbarApp(App[None]):
                     id="country-select",
                     allow_blank=False,
                     value=_COUNTRY_OPTIONS[0][1],
+                    compact=True,
                 )
 
                 yield Label("Store")
@@ -74,6 +75,7 @@ class FinnbarApp(App[None]):
                     prompt="All stores",
                     id="store-select",
                     allow_blank=True,
+                    compact=True,
                 )
 
                 yield Label("Product ID(s)")
