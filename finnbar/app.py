@@ -154,31 +154,43 @@ class FinnbarApp(App[None]):
         """Repopulate the store Select with stores for the given country."""
         stores = api.get_stores(country_code)
         options = [
-            (f"{s.bu_code} – {s.name}", s.bu_code)
+            (s.name, s.bu_code)
             for s in sorted(stores, key=lambda s: s.name)
         ]
         self.query_one("#store-select", Select).set_options(options)
 
     def _show_loading(self) -> None:
-        """Replace main area content with loading indicator."""
+        """Replace main area content with a loading indicator."""
         main = self.query_one("#main-area")
-        for child in list(main.children):
-            child.remove()
+        main.remove_children()
         main.mount(LoadingIndicator())
 
     def _show_empty(self, message: str) -> None:
+        """Show a centred informational message in the main area."""
         main = self.query_one("#main-area")
-        for child in list(main.children):
-            child.remove()
-        widget = Static(message, id="empty-state")
-        main.mount(widget)
+        existing = main.query("#empty-state")
+        if existing:
+            # Reuse the widget to avoid DuplicateIds — just remove siblings
+            for child in list(main.children):
+                if child.id != "empty-state":
+                    child.remove()
+            existing.first(Static).update(message)
+        else:
+            main.remove_children()
+            main.mount(Static(message, id="empty-state"))
 
     def _show_error(self, message: str) -> None:
+        """Show a centred error message in the main area."""
         main = self.query_one("#main-area")
-        for child in list(main.children):
-            child.remove()
-        widget = Static(f"⚠️  {message}", id="error-state")
-        main.mount(widget)
+        existing = main.query("#error-state")
+        if existing:
+            for child in list(main.children):
+                if child.id != "error-state":
+                    child.remove()
+            existing.first(Static).update(f"⚠️  {message}")
+        else:
+            main.remove_children()
+            main.mount(Static(f"⚠️  {message}", id="error-state"))
 
     def _do_clear(self) -> None:
         self.query_one("#product-input", Input).value = ""
@@ -203,16 +215,27 @@ class FinnbarApp(App[None]):
             )
             return
         bu_code = self._selected_store()
+        # Capture the human-readable store name for display in no-results message
+        store_name: str | None = None
+        if bu_code:
+            stores = api.get_stores(country)
+            store_name = next((s.name for s in stores if s.bu_code == bu_code), None)
         self._show_loading()
-        self._fetch_stock(country, product_ids, bu_code)
+        self._fetch_stock(country, product_ids, bu_code, store_name)
 
     @work(thread=True)
     def _fetch_stock(
-        self, country_code: str, product_ids: list[str], bu_code: str | None = None
+        self,
+        country_code: str,
+        product_ids: list[str],
+        bu_code: str | None = None,
+        store_name: str | None = None,
     ) -> None:
         try:
             results = api.check_availability(country_code, product_ids, bu_code)
-            self.call_from_thread(self._render_stock, results, country_code)
+            self.call_from_thread(
+                self._render_stock, results, country_code, product_ids, store_name
+            )
         except Exception as exc:  # noqa: BLE001
             self.call_from_thread(
                 self._show_error,
@@ -220,16 +243,22 @@ class FinnbarApp(App[None]):
             )
 
     def _render_stock(
-        self, results: list[api.StockInfo], country_code: str
+        self,
+        results: list[api.StockInfo],
+        country_code: str,
+        product_ids: list[str],
+        store_name: str | None,
     ) -> None:
         main = self.query_one("#main-area")
-        for child in list(main.children):
-            child.remove()
+        main.remove_children()
 
         if not results:
             country_name = api.get_country_name(country_code)
+            ids_str = ", ".join(product_ids)
+            store_part = f" in [b]{store_name}[/b]" if store_name else ""
             self._show_empty(
-                f"No availability data found for the selected product(s) in {country_name}."
+                f"No availability data found for product(s) [b]{ids_str}[/b]"
+                f"{store_part} in [b]{country_name}[/b]."
             )
             return
 

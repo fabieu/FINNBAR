@@ -131,10 +131,10 @@ def check_availability(
         # Only process store-type availability (classUnitType == "STO")
         if item.get("classUnitKey", {}).get("classUnitType") != "STO":
             continue
-        bu_code = item.get("classUnitKey", {}).get("classUnitCode", "")
-        if bu_code not in store_lookup:
+        store_code = item.get("classUnitKey", {}).get("classUnitCode", "")
+        if store_code not in store_lookup:
             continue
-        store = store_lookup[bu_code]
+        store = store_lookup[store_code]
         product_id = item.get("itemKey", {}).get("itemNo", "")
 
         stock = 0
@@ -160,7 +160,7 @@ def check_availability(
         results.append(
             StockInfo(
                 product_id=product_id,
-                bu_code=bu_code,
+                bu_code=store_code,
                 store_name=store.name,
                 country_code=store.country_code,
                 country=store.country,
