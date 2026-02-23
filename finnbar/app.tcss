@@ -1,0 +1,96 @@
+/* FINNBAR TUI Styles */
+
+Screen {
+    background: $surface;
+}
+
+#app-grid {
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 30 1fr;
+    height: 1fr;
+}
+
+#sidebar {
+    height: 100%;
+    border-right: tall $primary;
+    padding: 0 1;
+    overflow-y: auto;
+}
+
+#sidebar Label {
+    margin-top: 1;
+    text-style: bold;
+    color: $accent;
+}
+
+#sidebar Select {
+    margin-bottom: 1;
+}
+
+#sidebar Input {
+    margin-bottom: 1;
+}
+
+#search-stores-btn {
+    width: 100%;
+    margin-bottom: 1;
+    background: $primary;
+}
+
+#check-stock-btn {
+    width: 100%;
+    margin-bottom: 1;
+    background: $success;
+}
+
+#clear-btn {
+    width: 100%;
+    background: $surface-darken-1;
+    border: tall $primary-darken-2;
+}
+
+#main-area {
+    height: 100%;
+    padding: 1;
+}
+
+#status-bar {
+    height: 1;
+    dock: bottom;
+    background: $primary-darken-2;
+    color: $text;
+    padding: 0 1;
+}
+
+#results-table {
+    height: 1fr;
+    border: round $primary-darken-1;
+}
+
+LoadingIndicator {
+    height: 1fr;
+}
+
+#empty-state {
+    height: 1fr;
+    content-align: center middle;
+    color: $text-muted;
+    text-style: italic;
+}
+
+#error-state {
+    height: 1fr;
+    content-align: center middle;
+    color: $error;
+}
+
+#product-input {
+    margin-bottom: 0;
+}
+
+#hint-label {
+    color: $text-muted;
+    text-style: italic;
+    margin-bottom: 1;
+}
