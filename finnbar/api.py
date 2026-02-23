@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import json
-import requests
+import uuid
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-_DATA_FILE = Path(__file__).parent / "stores_data.json"
+import requests
+
+_DATA_FILE = Path(__file__).parent / "stores.json"
 _CLIENT_ID = "da465052-7912-43b2-82fa-9dc39cdccef8"
 _BASE_URL = "https://api.ingka.ikea.com"
 _TIMEOUT = 10
@@ -86,9 +89,9 @@ def get_all_stores() -> list[Store]:
 
 
 def check_availability(
-    country_code: str,
-    product_ids: list[str],
-    bu_code: str | None = None,
+        country_code: str,
+        product_ids: list[str],
+        bu_code: str | None = None,
 ) -> list[StockInfo]:
     """Check product availability across stores in a country.
 
@@ -152,7 +155,12 @@ def check_availability(
                 probability = (
                     avail.get("probability", {}).get("thisDay", {}).get("messageType", "")
                 )
-                updated_at = avail.get("updateDateTime", "")
+                updated_at = avail.get("updateDateTime")
+                if updated_at:
+                    try:
+                        updated_at = datetime.fromisoformat(updated_at).strftime("%Y-%m-%d %H:%M")
+                    except ValueError:
+                        pass
                 # Format datetime for display:
                 #   "2024-01-15T04:14:05.302Z" → "2024-01-15 04:14"
                 #   date-only string  → unchanged

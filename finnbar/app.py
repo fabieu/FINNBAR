@@ -286,9 +286,3 @@ class FinnbarApp(App[None]):
                 avail_cell,
                 r.updated_at,
             )
-
-        self.notify(
-            f"Found availability data for {len(results)} store(s).",
-            title="Stock",
-            timeout=4,
-        )

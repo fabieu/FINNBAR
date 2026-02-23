@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{ include = "finnbar" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 textual = "^8.0.0"
 requests = "^2.31.0"
 

@@ -2,7 +2,8 @@
 
 **FINNBAR** – a TUI for checking IKEA product availability in your local store, straight from your terminal.
 
-Built with [Textual](https://github.com/Textualize/textual) and powered by the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
+Built with [Textual](https://github.com/Textualize/textual) and powered by
+the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
 
 ## Features
 
@@ -12,7 +13,7 @@ Built with [Textual](https://github.com/Textualize/textual) and powered by the [
 
 ## Requirements
 
-- Python 3.10+
+- Python 3.11+
 - [Poetry](https://python-poetry.org/) package manager
 
 ## Installation
@@ -33,12 +34,12 @@ poetry install
 poetry run finnbar
 ```
 
-| Keyboard shortcut | Action |
-|---|---|
-| `Ctrl+S` | Search stores for the selected country |
-| `Ctrl+K` | Check stock for the entered product ID(s) |
-| `Ctrl+X` | Clear results |
-| `Ctrl+Q` | Quit |
+| Keyboard shortcut | Action                                    |
+|-------------------|-------------------------------------------|
+| `Ctrl+S`          | Search stores for the selected country    |
+| `Ctrl+K`          | Check stock for the entered product ID(s) |
+| `Ctrl+X`          | Clear results                             |
+| `Ctrl+Q`          | Quit                                      |
 
 ### Checking stock
 
