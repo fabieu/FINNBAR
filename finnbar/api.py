@@ -3,12 +3,10 @@
 from __future__ import annotations
 
 import json
-import time
+import requests
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
-
-import requests
 
 _DATA_FILE = Path(__file__).parent / "stores_data.json"
 _CLIENT_ID = "da465052-7912-43b2-82fa-9dc39cdccef8"

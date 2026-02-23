@@ -49,7 +49,7 @@ class FinnbarApp(App[None]):
         Binding("ctrl+q", "quit", "Quit"),
         Binding("ctrl+s", "search_stores", "Search Stores", show=True),
         Binding("ctrl+k", "check_stock", "Check Stock", show=True),
-        Binding("ctrl+c", "clear", "Clear", show=True),
+        Binding("ctrl+x", "clear", "Clear", show=True),
     ]
 
     _state: reactive[str] = reactive("idle")  # idle | loading | stores | stock | error
@@ -74,7 +74,6 @@ class FinnbarApp(App[None]):
                     placeholder="e.g. 40299687, S69022537",
                     id="product-input",
                 )
-                yield Label("(comma-separated for multiple)", id="hint-label")
 
                 yield Button("🏪  Search Stores", id="search-stores-btn", variant="primary")
                 yield Button("📦  Check Stock", id="check-stock-btn", variant="success")

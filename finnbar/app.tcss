@@ -89,8 +89,3 @@ LoadingIndicator {
     margin-bottom: 0;
 }
 
-#hint-label {
-    color: $text-muted;
-    text-style: italic;
-    margin-bottom: 1;
-}
