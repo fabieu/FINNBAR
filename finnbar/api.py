@@ -11,15 +11,16 @@ import requests
 
 from finnbar.models import Store, StockInfo
 
-_DATA_FILE = Path(__file__).parent / "stores.json"
 _CLIENT_ID = "da465052-7912-43b2-82fa-9dc39cdccef8"
 _BASE_URL = "https://api.ingka.ikea.com"
 _TIMEOUT = 10
 
 
 def _load_data() -> dict[str, Any]:
-    with _DATA_FILE.open(encoding="utf-8") as fh:
-        return json.load(fh)
+    data_file = Path(__file__).parent / "stores.json"
+
+    with data_file.open(encoding="utf-8") as df:
+        return json.load(df)
 
 
 _DATA = _load_data()
@@ -32,38 +33,23 @@ def get_country_codes() -> list[str]:
     return sorted(_COUNTRIES.keys())
 
 
-def get_country_name(code: str) -> str:
+def get_country_name(country_code: str) -> str:
     """Return country name for a given country code."""
-    return _COUNTRIES.get(code, code.upper())
+    return _COUNTRIES.get(country_code, country_code.upper())
 
 
 def get_stores(country_code: str) -> list[Store]:
-    """Return list of stores for the given country code."""
-    cc = country_code.lower().strip()
+    """Return list of stores for a given country code."""
     return [
         Store(
-            bu_code=s["buCode"],
-            name=s["name"],
-            country_code=s["countryCode"],
-            country=s.get("country", ""),
-            coordinates=s.get("coordinates", []),
+            bu_code=store["buCode"],
+            name=store["name"],
+            country_code=store["countryCode"],
+            country=store.get("country", ""),
+            coordinates=store.get("coordinates", []),
         )
-        for s in _STORES
-        if s["countryCode"] == cc
-    ]
-
-
-def get_all_stores() -> list[Store]:
-    """Return all stores."""
-    return [
-        Store(
-            bu_code=s["buCode"],
-            name=s["name"],
-            country_code=s["countryCode"],
-            country=s.get("country", ""),
-            coordinates=s.get("coordinates", []),
-        )
-        for s in _STORES
+        for store in _STORES
+        if store["countryCode"] == country_code.lower().strip()
     ]
 
 
@@ -98,10 +84,10 @@ def check_availability(
         "expand": "StoresList,Restocks",
         "itemNos": item_nos,
     }
-    resp = requests.get(url, headers=headers, params=params, timeout=_TIMEOUT)
-    resp.raise_for_status()
+    response = requests.get(url, headers=headers, params=params, timeout=_TIMEOUT)
+    response.raise_for_status()
 
-    data = resp.json()
+    data = response.json()
     if not isinstance(data.get("availabilities"), list):
         raise ValueError("Unexpected API response structure")
 
@@ -109,6 +95,7 @@ def check_availability(
     store_lookup: dict[str, Store] = {s.bu_code: s for s in get_stores(cc)}
 
     results: list[StockInfo] = []
+
     for item in data["availabilities"]:
         # Only process store-type availability (classUnitType == "STO")
         if item.get("classUnitKey", {}).get("classUnitType") != "STO":
@@ -140,15 +127,6 @@ def check_availability(
                         updated_at = datetime.fromisoformat(updated_at).strftime("%Y-%m-%d %H:%M")
                     except ValueError:
                         pass
-                # Format datetime for display:
-                #   "2024-01-15T04:14:05.302Z" → "2024-01-15 04:14"
-                #   date-only string  → unchanged
-                if "T" in updated_at:
-                    date_part, time_part = updated_at.split("T", 1)
-                    # Take up to 5 chars of the time ("HH:MM"); fall back to
-                    # the full time string if it's shorter than expected.
-                    time_short = time_part[:5] if len(time_part) >= 5 else time_part
-                    updated_at = f"{date_part} {time_short}"
 
         results.append(
             StockInfo(
@@ -163,8 +141,11 @@ def check_availability(
             )
         )
 
-    # Sort by store name then product id, and optionally filter by store
+    # Optionally filter by store (buCode)
     if bu_code:
         results = [r for r in results if r.bu_code == bu_code]
+
+    # Sort by store name then product id
     results.sort(key=lambda x: (x.store_name, x.product_id))
+
     return results

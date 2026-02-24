@@ -6,6 +6,7 @@ from rich.text import Text
 from textual import work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.containers import Container, Horizontal, Vertical
 from textual.reactive import reactive
 from textual.widgets import (
     Button,
@@ -18,24 +19,19 @@ from textual.widgets import (
     Select,
     Static,
 )
-from textual.containers import Container, Horizontal, Vertical
 
 from finnbar import api
 
-_COUNTRIES = api.get_country_codes()
 _COUNTRY_OPTIONS: list[tuple[str, str]] = [
-    (f"{code.upper()} – {api.get_country_name(code)}", code)
-    for code in _COUNTRIES
+    (f"{country_code.upper()} – {api.get_country_name(country_code)}", country_code)
+    for country_code in api.get_country_codes()
 ]
-
-# Human-readable availability labels with associated Rich color styles
 _PROBABILITY_DISPLAY: dict[str, tuple[str, str]] = {
     "HIGH_IN_STOCK": ("High in stock", "bold green"),
     "LOW_IN_STOCK": ("Low in stock", "bold yellow"),
     "OUT_OF_STOCK": ("Out of stock", "bold red"),
 }
 _PROBABILITY_FALLBACK: tuple[str, str] = ("Unknown", "dim")
-# Probability keys that mean zero items available for cash-and-carry
 _ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
 
 
@@ -80,7 +76,7 @@ class FinnbarApp(App[None]):
 
                 yield Label("Product ID(s)")
                 yield Input(
-                    placeholder="e.g. 40299687, S69022537",
+                    placeholder="e.g. 306.043.67, 10606640",
                     id="product-input",
                 )
 
@@ -227,11 +223,11 @@ class FinnbarApp(App[None]):
 
     @work(thread=True)
     def _fetch_stock(
-        self,
-        country_code: str,
-        product_ids: list[str],
-        bu_code: str | None = None,
-        store_name: str | None = None,
+            self,
+            country_code: str,
+            product_ids: list[str],
+            bu_code: str | None = None,
+            store_name: str | None = None,
     ) -> None:
         try:
             results = api.check_availability(country_code, product_ids, bu_code)
@@ -245,11 +241,11 @@ class FinnbarApp(App[None]):
             )
 
     def _render_stock(
-        self,
-        results: list[api.StockInfo],
-        country_code: str,
-        product_ids: list[str],
-        store_name: str | None,
+            self,
+            results: list[api.StockInfo],
+            country_code: str,
+            product_ids: list[str],
+            store_name: str | None,
     ) -> None:
         main = self.query_one("#main-area")
         main.remove_children()
@@ -268,21 +264,20 @@ class FinnbarApp(App[None]):
         main.mount(table)
         table.add_columns(
             "Product ID",
-            "Store",
             "Country",
+            "Store",
             "Stock",
             "Availability",
             "Updated",
         )
         for r in results:
-            label, color = _PROBABILITY_DISPLAY.get(r.probability, _PROBABILITY_FALLBACK)
-            avail_cell = Text(label, style=color)
-            stock_str = str(r.stock) if r.probability not in _ZERO_STOCK_KEYS else "0"
+            avail_label, avail_color = _PROBABILITY_DISPLAY.get(r.probability, _PROBABILITY_FALLBACK)
+
             table.add_row(
                 r.product_id,
+                f"{r.country_code.upper()} – {r.country}",
                 r.store_name,
-                f"{r.country} ({r.country_code.upper()})",
-                stock_str,
-                avail_cell,
+                str(r.stock) if r.probability not in _ZERO_STOCK_KEYS else "0",
+                Text(avail_label, style=avail_color),
                 r.updated_at,
             )
