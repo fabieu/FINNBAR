@@ -76,7 +76,7 @@ class FinnbarApp(App[None]):
 
                 yield Label("Product ID(s)")
                 yield Input(
-                    placeholder="e.g. 306.043.67, 10606640",
+                    placeholder="306.043.67, 10606640",
                     id="product-input",
                 )
 
@@ -86,7 +86,7 @@ class FinnbarApp(App[None]):
             # ── Main area ──────────────────────────────────────────────
             with Container(id="main-area"):
                 yield Static(
-                    "Select a country and optional store,\n"
+                    "Select a country and store (optional),\n"
                     "then enter a product ID and press\n"
                     "[b]Check Stock[/b] to view availability.",
                     id="empty-state",
@@ -193,7 +193,7 @@ class FinnbarApp(App[None]):
     def _do_clear(self) -> None:
         self.query_one("#product-input", Input).value = ""
         self._show_empty(
-            "Select a country and optional store,\n"
+            "Select a country and store (optional),\n"
             "then enter a product ID and press\n"
             "[b]Check Stock[/b] to view availability."
         )
