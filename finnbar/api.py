@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import json
-import uuid
-from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 import requests
+
+from finnbar.models import Store, StockInfo
 
 _DATA_FILE = Path(__file__).parent / "stores.json"
 _CLIENT_ID = "da465052-7912-43b2-82fa-9dc39cdccef8"
@@ -25,27 +25,6 @@ def _load_data() -> dict[str, Any]:
 _DATA = _load_data()
 _STORES: list[dict[str, Any]] = _DATA["stores"]
 _COUNTRIES: dict[str, str] = _DATA["countries"]
-
-
-@dataclass
-class Store:
-    bu_code: str
-    name: str
-    country_code: str
-    country: str
-    coordinates: list[float] = field(default_factory=list)
-
-
-@dataclass
-class StockInfo:
-    product_id: str
-    bu_code: str
-    store_name: str
-    country_code: str
-    country: str
-    stock: int
-    probability: str
-    updated_at: str
 
 
 def get_country_codes() -> list[str]:

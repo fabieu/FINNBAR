@@ -31,6 +31,8 @@ Screen {
 
 #sidebar Input {
     margin-bottom: 1;
+    border: none;
+    background-tint: $foreground 6%;
 }
 
 #check-stock-btn {
@@ -43,12 +45,19 @@ Screen {
 }
 
 #check-stock-btn:hover {
-    background: #007838;
+    background: #005c2e;
+    color: white;
+    border: none;
 }
 
 #clear-btn {
     width: 100%;
     height: 3;
+    border: none;
+}
+
+#clear-btn:hover {
+    background: $surface-darken-1;
     border: none;
 }
 
