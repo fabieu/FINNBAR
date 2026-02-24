@@ -1,48 +1,42 @@
 # FINNBAR
 
-**FINNBAR** – a TUI for checking IKEA product availability in your local store, straight from your terminal.
+**FINNBAR** - a TUI for browsing and checking real-time IKEA product availability across your local stores, without
+leaving the terminal.
 
-Built with [Textual](https://github.com/Textualize/textual) and powered by
-the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
+---
 
-## Screenshots
-
-![FINNBAR idle state](docs/screenshot-idle.svg)
-
-![FINNBAR stock results](docs/screenshot-results.svg)
+No more clicking through IKEA's website only to find your KALLAX is out of stock. **FINNBAR** (_finns bara_ — Swedish
+for "is available") lets you search, filter, and check availability across multiple stores — all from the comfort of
+your terminal.
 
 ## Features
 
 - 🏪 **Browse stores** – list all IKEA stores for any supported country (40+ countries, 400+ stores)
 - 📦 **Check stock** – look up real-time availability for one or more product IDs across all stores in a country
-- ⌨️ **Keyboard-driven** – full keyboard navigation with shortcut bindings shown in the footer
+- ⌨️ **Keyboard-driven** – full keyboard navigation with shortcut bindings
 
 ## Requirements
 
 - Python 3.11+
-- [Poetry](https://python-poetry.org/) package manager
 
 ## Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/fabieu/FINNBAR.git
-cd FINNBAR
+# Download the latest release from PyPI
+pipx install finnbar
 
-# Install dependencies and the runnable script
-poetry install
+# Launch the TUI
+finnbar
 ```
+
+## Screenshots
+
+![FINNBAR idle state](docs/screenshot-idle.svg)
 
 ## Usage
 
-```bash
-# Launch the TUI
-poetry run finnbar
-```
-
 | Keyboard shortcut | Action                                    |
 |-------------------|-------------------------------------------|
-| `Ctrl+S`          | Search stores for the selected country    |
 | `Ctrl+K`          | Check stock for the entered product ID(s) |
 | `Ctrl+X`          | Clear results                             |
 | `Ctrl+Q`          | Quit                                      |
@@ -50,10 +44,9 @@ poetry run finnbar
 ### Checking stock
 
 1. Select a **country** from the dropdown
-2. Enter one or more **product IDs** in the input field (comma-separated, e.g. `40299687, S69022537`)
-3. Press **Check Stock** or `Ctrl+K`
+2. Optionally select a **store** from the dropdown (or leave it as "All stores")
+3. Enter one or more **product IDs** in the input field (comma-separated, e.g. `306.043.67, 10606640`)
+4. Press **Check Stock** or `Ctrl+K`
 
-### Browsing stores
-
-1. Select a **country** from the dropdown
-2. Press **Search Stores** or `Ctrl+S`
+Built with [Textual](https://github.com/Textualize/textual) and powered by
+the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
