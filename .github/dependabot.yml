@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      time: "07:00"
+    labels:
+      - "dependencies"
+    assignees:
+      - "fabieu"
+    groups:
+      major-updates:
+        update-types:
+          - "major"
+      minor-updates:
+        update-types:
+          - "minor"
+          - "patch"
+      other-updates:
+        patterns:
+          - "*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      time: "07:00"
+    labels:
+      - "dependencies"
+    assignees:
+      - "fabieu"
+    groups:
+      gh-actions-dependencies:
+        patterns: [ "*" ]
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      time: "07:00"
+    labels:
+      - "dependencies"
+    assignees:
+      - "fabieu"
+    groups:
+      docker-dependencies:
+        patterns: [ "*" ]
