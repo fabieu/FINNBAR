@@ -5,6 +5,12 @@
 Built with [Textual](https://github.com/Textualize/textual) and powered by
 the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
 
+## Screenshots
+
+![FINNBAR idle state](docs/screenshot-idle.svg)
+
+![FINNBAR stock results](docs/screenshot-results.svg)
+
 ## Features
 
 - 🏪 **Browse stores** – list all IKEA stores for any supported country (40+ countries, 400+ stores)
