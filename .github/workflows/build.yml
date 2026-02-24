@@ -35,7 +35,7 @@ jobs:
         run: echo "Version ${{ steps.version.outputs.version }}"
 
   build:
-    name: Build and publish package
+    name: Build package
     runs-on: ubuntu-latest
     container:
       image: python:3.14-slim
