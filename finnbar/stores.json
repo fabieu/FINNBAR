@@ -102,16 +102,6 @@
     },
     {
       "buCode": "384",
-      "name": "Richmond",
-      "coordinates": [
-        145.007,
-        -37.8087
-      ],
-      "countryCode": "au",
-      "country": "Australia"
-    },
-    {
-      "buCode": "384",
       "name": "Melbourne - Richmond",
       "coordinates": [
         145.0109921,
@@ -201,41 +191,11 @@
       "country": "Belgium"
     },
     {
-      "buCode": "169",
-      "name": "Gent",
-      "coordinates": [
-        3.6954,
-        51.0266
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
       "buCode": "179",
       "name": "Wilrijk",
       "coordinates": [
         4.3835,
         51.1576
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
-      "buCode": "179",
-      "name": "Wilrijk",
-      "coordinates": [
-        4.3835,
-        51.1576
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
-      "buCode": "375",
-      "name": "Liège",
-      "coordinates": [
-        5.4647,
-        50.6788
       ],
       "countryCode": "be",
       "country": "Belgium"
@@ -261,26 +221,6 @@
       "country": "Belgium"
     },
     {
-      "buCode": "376",
-      "name": "Zaventem",
-      "coordinates": [
-        4.4912,
-        50.8723
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
-      "buCode": "423",
-      "name": "Mons",
-      "coordinates": [
-        3.932,
-        50.4618
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
       "buCode": "423",
       "name": "Mons",
       "coordinates": [
@@ -301,41 +241,11 @@
       "country": "Belgium"
     },
     {
-      "buCode": "452",
-      "name": "Hasselt",
-      "coordinates": [
-        5.32,
-        50.9186
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
       "buCode": "482",
       "name": "Anderlecht",
       "coordinates": [
         4.2916,
         50.8103
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
-      "buCode": "482",
-      "name": "Anderlecht",
-      "coordinates": [
-        4.2916,
-        50.8103
-      ],
-      "countryCode": "be",
-      "country": "Belgium"
-    },
-    {
-      "buCode": "483",
-      "name": "Arlon",
-      "coordinates": [
-        5.8905,
-        49.6371
       ],
       "countryCode": "be",
       "country": "Belgium"
@@ -501,31 +411,11 @@
       "country": "Canada"
     },
     {
-      "buCode": "698",
-      "name": "Scarborough Town Centre",
-      "coordinates": [
-        -79.2568,
-        43.7772
-      ],
-      "countryCode": "ca",
-      "country": "Canada"
-    },
-    {
       "buCode": "078",
       "name": "Aubonne",
       "coordinates": [
         6.3973,
         46.4765
-      ],
-      "countryCode": "ch",
-      "country": "Switzerland"
-    },
-    {
-      "buCode": "079",
-      "name": "Spreitenbach",
-      "coordinates": [
-        8.3752,
-        47.4217
       ],
       "countryCode": "ch",
       "country": "Switzerland"
@@ -882,16 +772,6 @@
       "coordinates": [
         9.98357782,
         49.82212726
-      ],
-      "countryCode": "de",
-      "country": "Germany"
-    },
-    {
-      "buCode": "129",
-      "name": "Berlin-Waltersdorf",
-      "coordinates": [
-        13.5563,
-        52.3668
       ],
       "countryCode": "de",
       "country": "Germany"
@@ -1337,16 +1217,6 @@
       "country": "Germany"
     },
     {
-      "buCode": "617",
-      "name": "Potsdam",
-      "coordinates": [
-        13.0492,
-        52.3996
-      ],
-      "countryCode": "de",
-      "country": "Germany"
-    },
-    {
       "buCode": "005",
       "name": "Aalborg",
       "coordinates": [
@@ -1362,16 +1232,6 @@
       "coordinates": [
         12.286570982964511,
         55.659344218196985
-      ],
-      "countryCode": "dk",
-      "country": "Denmark"
-    },
-    {
-      "buCode": "121",
-      "name": "Gentofte",
-      "coordinates": [
-        12.519070184814545,
-        55.75499959890006
       ],
       "countryCode": "dk",
       "country": "Denmark"
@@ -1438,16 +1298,6 @@
     },
     {
       "buCode": "031",
-      "name": "Alcorcón",
-      "coordinates": [
-        -3.85589,
-        40.350288
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "031",
       "name": "Madrid - Alcorcon",
       "coordinates": [
         -3.855852149987735,
@@ -1458,30 +1308,10 @@
     },
     {
       "buCode": "171",
-      "name": "Sabadell",
-      "coordinates": [
-        2.107281,
-        41.51025
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "171",
       "name": "Barcelona - Sabadell",
       "coordinates": [
         2.106953,
         41.510579
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "276",
-      "name": "Barakaldo",
-      "coordinates": [
-        -3.0065,
-        43.2914
       ],
       "countryCode": "es",
       "country": "Spain"
@@ -1502,16 +1332,6 @@
       "coordinates": [
         -6.16488,
         36.699337
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "280",
-      "name": "Badalona",
-      "coordinates": [
-        2.22541332,
-        41.4592926
       ],
       "countryCode": "es",
       "country": "Spain"
@@ -1557,51 +1377,11 @@
       "country": "Spain"
     },
     {
-      "buCode": "304",
-      "name": "Malaga",
-      "coordinates": [
-        -4.4825,
-        36.6583
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "339",
-      "name": "Valencia (Alfafar)",
-      "coordinates": [
-        -0.3873451,
-        39.4150805
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
       "buCode": "339",
       "name": "Valencia - Alfafar",
       "coordinates": [
         -0.4,
         39.4169
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "406",
-      "name": "Hospitalet (Gran Vía)",
-      "coordinates": [
-        2.1238635,
-        41.3547298
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "406",
-      "name": "Gran Vía LHospitalet",
-      "coordinates": [
-        2.123058,
-        41.354273
       ],
       "countryCode": "es",
       "country": "Spain"
@@ -1642,16 +1422,6 @@
       "coordinates": [
         -0.891056,
         41.608001
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "498",
-      "name": "Ensanche de Vallecas",
-      "coordinates": [
-        -3.5958105,
-        40.369647
       ],
       "countryCode": "es",
       "country": "Spain"
@@ -1922,16 +1692,6 @@
       "coordinates": [
         5.267922527486527,
         43.42949830249604
-      ],
-      "countryCode": "fr",
-      "country": "France"
-    },
-    {
-      "buCode": "131",
-      "name": "Paris Nord",
-      "coordinates": [
-        2.4945,
-        48.9751
       ],
       "countryCode": "fr",
       "country": "France"
@@ -2727,16 +2487,6 @@
       "country": "Italy"
     },
     {
-      "buCode": "354",
-      "name": "Brescia - Roncadelle",
-      "coordinates": [
-        10.166230141711699,
-        45.53399936087228
-      ],
-      "countryCode": "it",
-      "country": "Italy"
-    },
-    {
       "buCode": "355",
       "name": "Padova",
       "coordinates": [
@@ -3043,24 +2793,8 @@
       "country": "Lithuania"
     },
     {
-      "buCode": "235",
-      "name": "Felit UAB",
-      "coordinates": [
-        25.281,
-        54.65
-      ],
-      "countryCode": "lt",
-      "country": "Lithuania"
-    },
-    {
       "buCode": "516",
       "name": "Riga",
-      "countryCode": "lv",
-      "country": "Latvia"
-    },
-    {
-      "buCode": "516",
-      "name": "Paul Mason Properties SIA",
       "coordinates": [
         24.255,
         56.9548
@@ -3304,16 +3038,6 @@
       "coordinates": [
         11.0575,
         60.8402
-      ],
-      "countryCode": "no",
-      "country": "Norway"
-    },
-    {
-      "buCode": "441",
-      "name": "Åsane",
-      "coordinates": [
-        5.3249,
-        60.4712
       ],
       "countryCode": "no",
       "country": "Norway"
@@ -4089,16 +3813,6 @@
       "country": "Thailand"
     },
     {
-      "buCode": "694",
-      "name": "IKANO (Thailand) Limited",
-      "coordinates": [
-        100.566601,
-        13.731
-      ],
-      "countryCode": "th",
-      "country": "Thailand"
-    },
-    {
       "buCode": "305",
       "name": "台中店",
       "coordinates": [
@@ -4459,16 +4173,6 @@
       "country": "United States of America"
     },
     {
-      "buCode": "327",
-      "name": "Miami",
-      "coordinates": [
-        -80.38344452196753,
-        25.791560035188827
-      ],
-      "countryCode": "us",
-      "country": "United States of America"
-    },
-    {
       "buCode": "347",
       "name": "East Palo Alto, CA",
       "coordinates": [
@@ -4579,31 +4283,11 @@
       "country": "United States of America"
     },
     {
-      "buCode": "508",
-      "name": "Memphis",
-      "coordinates": [
-        -89.79864078863858,
-        35.190467433784825
-      ],
-      "countryCode": "us",
-      "country": "United States of America"
-    },
-    {
       "buCode": "511",
       "name": "Columbus, OH",
       "coordinates": [
         -82.9671,
         40.1507
-      ],
-      "countryCode": "us",
-      "country": "United States of America"
-    },
-    {
-      "buCode": "535",
-      "name": "Grand Prairie, TX",
-      "coordinates": [
-        -97.02283805344578,
-        32.70265769389484
       ],
       "countryCode": "us",
       "country": "United States of America"
