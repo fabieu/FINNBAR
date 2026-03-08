@@ -1457,46 +1457,6 @@
       "country": "Spain"
     },
     {
-      "buCode": "102",
-      "name": "Pamplona - La Galaria",
-      "coordinates": [
-        -1.6347,
-        42.7875
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "102",
-      "name": "Sant Pere de Ribes - Parc d Oci",
-      "coordinates": [
-        1.7529,
-        41.2384
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "117",
-      "name": "Vitoria - Gasteiz",
-      "coordinates": [
-        -2.665063275758198,
-        42.86094153590406
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
-      "buCode": "124",
-      "name": "Girona - Carrer Astúries",
-      "coordinates": [
-        2.8089,
-        41.955
-      ],
-      "countryCode": "es",
-      "country": "Spain"
-    },
-    {
       "buCode": "171",
       "name": "Sabadell",
       "coordinates": [
@@ -1792,6 +1752,46 @@
       "coordinates": [
         -3.7072,
         40.4798
+      ],
+      "countryCode": "es",
+      "country": "Spain"
+    },
+    {
+      "buCode": "1027",
+      "name": "Pamplona - La Galaria",
+      "coordinates": [
+        -1.6347,
+        42.7875
+      ],
+      "countryCode": "es",
+      "country": "Spain"
+    },
+    {
+      "buCode": "1028",
+      "name": "Sant Pere de Ribes - Parc d Oci",
+      "coordinates": [
+        1.7529,
+        41.2384
+      ],
+      "countryCode": "es",
+      "country": "Spain"
+    },
+    {
+      "buCode": "1173",
+      "name": "Vitoria - Gasteiz",
+      "coordinates": [
+        -2.665063275758198,
+        42.86094153590406
+      ],
+      "countryCode": "es",
+      "country": "Spain"
+    },
+    {
+      "buCode": "1245",
+      "name": "Girona - Carrer Astúries",
+      "coordinates": [
+        2.8089,
+        41.955
       ],
       "countryCode": "es",
       "country": "Spain"
@@ -2577,7 +2577,7 @@
       "country": "Ireland"
     },
     {
-      "buCode": "116",
+      "buCode": "1168",
       "name": "Dublin - The Park, Carrickmines",
       "coordinates": [
         -6.1857,
@@ -2827,16 +2827,6 @@
       "country": "Jordan"
     },
     {
-      "buCode": "117",
-      "name": "Yokohama - Bay Quarter",
-      "coordinates": [
-        139.6265696,
-        35.46660674
-      ],
-      "countryCode": "jp",
-      "country": "Japan"
-    },
-    {
       "buCode": "189",
       "name": "福岡新宮",
       "coordinates": [
@@ -2962,6 +2952,16 @@
       "coordinates": [
         139.8704,
         35.8562
+      ],
+      "countryCode": "jp",
+      "country": "Japan"
+    },
+    {
+      "buCode": "1176",
+      "name": "Yokohama - Bay Quarter",
+      "coordinates": [
+        139.6265696,
+        35.46660674
       ],
       "countryCode": "jp",
       "country": "Japan"
@@ -3339,16 +3339,6 @@
       "country": "Norway"
     },
     {
-      "buCode": "122",
-      "name": "Bielsko-Biala - Gemini Park",
-      "coordinates": [
-        19.050863428835555,
-        49.802899790561234
-      ],
-      "countryCode": "pl",
-      "country": "Poland"
-    },
-    {
       "buCode": "188",
       "name": "Warszawa Janki",
       "coordinates": [
@@ -3454,6 +3444,16 @@
       "coordinates": [
         14.514004,
         53.407522
+      ],
+      "countryCode": "pl",
+      "country": "Poland"
+    },
+    {
+      "buCode": "1224",
+      "name": "Bielsko-Biala - Gemini Park",
+      "coordinates": [
+        19.050863428835555,
+        49.802899790561234
       ],
       "countryCode": "pl",
       "country": "Poland"
@@ -3859,16 +3859,6 @@
       "country": "Sweden"
     },
     {
-      "buCode": "101",
-      "name": "Stockholm - MoS",
-      "coordinates": [
-        18.0037,
-        59.3704
-      ],
-      "countryCode": "se",
-      "country": "Sweden"
-    },
-    {
       "buCode": "106",
       "name": "Örebro",
       "coordinates": [
@@ -4014,6 +4004,16 @@
       "coordinates": [
         18.0681,
         59.3306
+      ],
+      "countryCode": "se",
+      "country": "Sweden"
+    },
+    {
+      "buCode": "1015",
+      "name": "Stockholm - MoS",
+      "coordinates": [
+        18.0037,
+        59.3704
       ],
       "countryCode": "se",
       "country": "Sweden"
@@ -4214,16 +4214,6 @@
       "coordinates": [
         -111.8922,
         40.5083
-      ],
-      "countryCode": "us",
-      "country": "United States of America"
-    },
-    {
-      "buCode": "110",
-      "name": "McAllen Pharr - Town Center",
-      "coordinates": [
-        -98.20164,
-        26.2042
       ],
       "countryCode": "us",
       "country": "United States of America"
@@ -4704,6 +4694,16 @@
       "coordinates": [
         -74.0115,
         40.672
+      ],
+      "countryCode": "us",
+      "country": "United States of America"
+    },
+    {
+      "buCode": "1100",
+      "name": "McAllen Pharr - Town Center",
+      "coordinates": [
+        -98.20164,
+        26.2042
       ],
       "countryCode": "us",
       "country": "United States of America"
