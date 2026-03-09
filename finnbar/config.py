@@ -18,6 +18,12 @@ class Config:
     product_ids: list[str] = field(default_factory=list)
 
 
+def _save(cfg: Config) -> None:
+    """Persist the given Config to disk."""
+    _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    _CONFIG_FILE.write_text(json.dumps(asdict(cfg), indent=2), encoding=_ENCODING)
+
+
 def load() -> Config:
     """Load config from disk. Returns a default Config if the file doesn't exist."""
     try:
@@ -27,7 +33,15 @@ def load() -> Config:
         return Config()
 
 
-def save(cfg: Config) -> None:
-    """Persist the given Config to disk."""
-    _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    _CONFIG_FILE.write_text(json.dumps(asdict(cfg), indent=2), encoding=_ENCODING)
+def reset() -> None:
+    """Reset the config to defaults and persist to disk."""
+    _save(Config())
+
+
+def update(**kwargs) -> None:
+    """Update individual config fields and persist to disk."""
+    cfg = load()
+    for key, value in kwargs.items():
+        if hasattr(cfg, key):
+            setattr(cfg, key, value)
+    _save(cfg)

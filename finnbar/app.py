@@ -209,7 +209,7 @@ class FinnbarApp(App[None]):
             main.mount(Static(f"⚠️  {message}", id="error-state"))
 
     def _do_reset(self) -> None:
-        config.save(config.Config())
+        config.reset()
 
         self.query_one("#product-input", Input).clear()
         self.query_one("#store-select", Select).clear()
@@ -238,7 +238,7 @@ class FinnbarApp(App[None]):
             stores = api.get_stores(country)
             store_name = next((s.name for s in stores if s.bu_code == bu_code), None)
 
-        config.save(config.Config(country_code=country, store=bu_code, product_ids=product_ids))
+        config.update(country_code=country, store=bu_code, product_ids=product_ids)
 
         self._show_loading()
         self._fetch_stock(country, product_ids, bu_code, store_name)
