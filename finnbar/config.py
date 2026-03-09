@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass, field
-from pathlib import Path
 
-_CONFIG_DIR = Path.home() / ".config" / "finnbar"
+import platformdirs
+
+_CONFIG_DIR = platformdirs.user_cache_path(appname="finnbar")
 _CONFIG_FILE = _CONFIG_DIR / "config.json"
 _ENCODING = "utf-8"
 
@@ -32,7 +33,7 @@ def load() -> Config:
     try:
         data = json.loads(_CONFIG_FILE.read_text(encoding=_ENCODING))
         return Config(**{k: v for k, v in data.items() if k in Config.__dataclass_fields__})
-    except (FileNotFoundError, TypeError, json.JSONDecodeError):
+    except (OSError, TypeError, json.JSONDecodeError):
         return Config()
 
 
@@ -44,7 +45,12 @@ def reset() -> None:
 def update(**kwargs) -> None:
     """Update individual config fields and persist to disk."""
     cfg = load()
+
+    unknown_keys = [key for key in kwargs if key not in Config.__dataclass_fields__]
+    if unknown_keys:
+        raise AttributeError(f"Unknown configuration field(s): {', '.join(sorted(unknown_keys))}")
+
     for key, value in kwargs.items():
-        if hasattr(cfg, key):
-            setattr(cfg, key, value)
+        setattr(cfg, key, value)
+
     _save(cfg)

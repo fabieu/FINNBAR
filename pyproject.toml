@@ -11,6 +11,7 @@ packages = [{ include = "finnbar" }]
 python = "^3.11"
 textual = "^8.0.0"
 requests = "^2.31.0"
+platformdirs = "^4.9.4"
 
 [tool.poetry.scripts]
 finnbar = "finnbar.__main__:main"
