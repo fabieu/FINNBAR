@@ -9,7 +9,7 @@ from typing import Any
 
 import requests
 
-from finnbar.models import Store, StockInfo
+from finnbar.models import RestockInfo, Store, StockInfo
 
 _CLIENT_ID = "da465052-7912-43b2-82fa-9dc39cdccef8"
 _BASE_URL = "https://api.ingka.ikea.com"
@@ -100,33 +100,53 @@ def check_availability(
         # Only process store-type availability (classUnitType == "STO")
         if item.get("classUnitKey", {}).get("classUnitType") != "STO":
             continue
+
         store_code = item.get("classUnitKey", {}).get("classUnitCode", "")
         if store_code not in store_lookup:
             continue
+
         store = store_lookup[store_code]
         product_id = item.get("itemKey", {}).get("itemNo", "")
 
         stock = 0
         probability = ""
         updated_at = ""
+        restocks = []
 
         if item.get("availableForCashCarry"):
-            avail = (
+            item_available = (
                 item.get("buyingOption", {})
                 .get("cashCarry", {})
                 .get("availability", {})
             )
-            if avail:
-                stock = int(avail.get("quantity", 0) or 0)
+            if item_available:
+                stock = int(item_available.get("quantity", 0) or 0)
                 probability = (
-                    avail.get("probability", {}).get("thisDay", {}).get("messageType", "")
+                    item_available.get("probability", {}).get("thisDay", {}).get("messageType", "")
                 )
-                updated_at = avail.get("updateDateTime")
+                updated_at = item_available.get("updateDateTime")
                 if updated_at:
                     try:
                         updated_at = datetime.fromisoformat(updated_at).strftime("%Y-%m-%d %H:%M")
                     except ValueError:
                         pass
+
+                for restock in item_available.get("restocks") or []:
+                    earliest = restock.get("earliestDate", "")
+                    latest = restock.get("latestDate", "")
+
+                    try:
+                        earliest = datetime.fromisoformat(earliest).strftime("%Y-%m-%d") if earliest else ""
+                        latest = datetime.fromisoformat(latest).strftime("%Y-%m-%d") if latest else ""
+                    except ValueError:
+                        pass
+
+                    restocks.append(RestockInfo(
+                        quantity=int(restock.get("quantity", 0) or 0),
+                        earliest_date=earliest,
+                        latest_date=latest,
+                        reliability=restock.get("reliability", ""),
+                    ))
 
         results.append(
             StockInfo(
@@ -138,6 +158,7 @@ def check_availability(
                 stock=stock,
                 probability=probability,
                 updated_at=updated_at,
+                restocks=restocks,
             )
         )
 
