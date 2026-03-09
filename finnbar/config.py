@@ -6,7 +6,7 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
-_CONFIG_DIR = Path.home() / ".finnbar"
+_CONFIG_DIR = Path.home() / ".config" / "finnbar"
 _CONFIG_FILE = _CONFIG_DIR / "config.json"
 _ENCODING = "utf-8"
 
