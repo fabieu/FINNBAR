@@ -20,12 +20,14 @@ from textual.widgets import (
     Static,
 )
 
-from finnbar import api
+from finnbar import api, config
 
 _COUNTRY_OPTIONS: list[tuple[str, str]] = [
     (f"{country_code.upper()} – {api.get_country_name(country_code)}", country_code)
     for country_code in api.get_country_codes()
 ]
+_COUNTRY_CODES: list[str] = [country_code for _, country_code in _COUNTRY_OPTIONS]
+_DEFAULT_COUNTRY_CODE: str = "de"
 _ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
 _PROBABILITY_DISPLAY: dict[str, tuple[str, str]] = {
     "HIGH_IN_STOCK": ("High", "bold green"),
@@ -49,7 +51,7 @@ class FinnbarApp(App[None]):
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit"),
         Binding("ctrl+k", "check_stock", "Check Stock", show=True),
-        Binding("ctrl+x", "clear", "Clear", show=True),
+        Binding("ctrl+x", "reset", "Reset", show=True),
     ]
 
     _state: reactive[str] = reactive("idle")  # idle | loading | stock | error
@@ -86,7 +88,7 @@ class FinnbarApp(App[None]):
                 )
 
                 yield Button("Check Stock", id="check-stock-btn", variant="success")
-                yield Button("Clear", id="clear-btn")
+                yield Button("Reset", id="reset-btn")
 
             # ── Main area ──────────────────────────────────────────────
             with Container(id="main-area"):
@@ -102,16 +104,27 @@ class FinnbarApp(App[None]):
     # ── Lifecycle ──────────────────────────────────────────────────────
 
     def on_mount(self) -> None:
-        """Populate store dropdown for the initially selected country."""
-        self._update_store_select(_COUNTRY_OPTIONS[0][1])
+        """Populate store dropdown and restore last session from config."""
+        cfg = config.load()
+
+        country = cfg.country_code if cfg.country_code in _COUNTRY_CODES else _DEFAULT_COUNTRY_CODE
+        self.query_one("#country-select", Select).value = country
+        self._update_store_select(country)
+
+        if cfg.store:
+            self.query_one("#store-select", Select).value = cfg.store
+
+        if cfg.product_ids:
+            self.query_one("#product-input", Input).value = ", ".join(cfg.product_ids)
+            self._do_check_stock()
 
     # ── Actions ────────────────────────────────────────────────────────
 
     def action_check_stock(self) -> None:
         self.query_one("#check-stock-btn", Button).press()
 
-    def action_clear(self) -> None:
-        self.query_one("#clear-btn", Button).press()
+    def action_reset(self) -> None:
+        self.query_one("#reset-btn", Button).press()
 
     # ── Event handlers ─────────────────────────────────────────────────
 
@@ -123,8 +136,8 @@ class FinnbarApp(App[None]):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "check-stock-btn":
             self._do_check_stock()
-        elif event.button.id == "clear-btn":
-            self._do_clear()
+        elif event.button.id == "reset-btn":
+            self._do_reset()
 
     # ── Helpers ────────────────────────────────────────────────────────
 
@@ -195,27 +208,28 @@ class FinnbarApp(App[None]):
             main.remove_children()
             main.mount(Static(f"⚠️  {message}", id="error-state"))
 
-    def _do_clear(self) -> None:
-        self.query_one("#product-input", Input).value = ""
+    def _do_reset(self) -> None:
+        config.save(config.Config())
+
+        self.query_one("#product-input", Input).clear()
+        self.query_one("#store-select", Select).clear()
         self._show_empty(
             "Select a country and store (optional),\n"
             "then enter a product ID and press\n"
             "[b]Check Stock[/b] to view availability."
         )
-        self.notify("Cleared.", timeout=2)
+        self.notify("Reset", timeout=2)
 
     # ── Stock check ────────────────────────────────────────────────────
 
     def _do_check_stock(self) -> None:
         country = self._selected_country()
         if not country:
-            self.notify("Please select a country first.", severity="warning")
+            self.notify("Please select a country first", severity="warning")
             return
         product_ids = self._product_ids()
         if not product_ids:
-            self.notify(
-                "Please enter at least one product ID.", severity="warning"
-            )
+            self.notify("Please enter at least one product id", severity="warning")
             return
         bu_code = self._selected_store()
         # Capture the human-readable store name for display in no-results message
@@ -223,6 +237,9 @@ class FinnbarApp(App[None]):
         if bu_code:
             stores = api.get_stores(country)
             store_name = next((s.name for s in stores if s.bu_code == bu_code), None)
+
+        config.save(config.Config(country_code=country, store=bu_code, product_ids=product_ids))
+
         self._show_loading()
         self._fetch_stock(country, product_ids, bu_code, store_name)
 
