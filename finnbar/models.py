@@ -15,6 +15,14 @@ class Store:
 
 
 @dataclass
+class RestockInfo:
+    quantity: int
+    earliest_date: str
+    latest_date: str
+    reliability: str  # "HIGH" or "LOW"
+
+
+@dataclass
 class StockInfo:
     product_id: str
     bu_code: str
@@ -24,3 +32,4 @@ class StockInfo:
     stock: int
     probability: str
     updated_at: str
+    restocks: list[RestockInfo] = field(default_factory=list)

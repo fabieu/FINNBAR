@@ -22,11 +22,18 @@ your terminal.
 ## Installation
 
 ```bash
-# Download the latest release from PyPI
+# Install the latest version
 pipx install finnbar
 
 # Launch the TUI
 finnbar
+```
+
+## Upgrading
+
+```bash
+# Upgrade to the latest version
+pipx upgrade finnbar
 ```
 
 ## Screenshots

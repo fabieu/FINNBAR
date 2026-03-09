@@ -26,13 +26,18 @@ _COUNTRY_OPTIONS: list[tuple[str, str]] = [
     (f"{country_code.upper()} – {api.get_country_name(country_code)}", country_code)
     for country_code in api.get_country_codes()
 ]
+_ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
 _PROBABILITY_DISPLAY: dict[str, tuple[str, str]] = {
-    "HIGH_IN_STOCK": ("High in stock", "bold green"),
-    "LOW_IN_STOCK": ("Low in stock", "bold yellow"),
-    "OUT_OF_STOCK": ("Out of stock", "bold red"),
+    "HIGH_IN_STOCK": ("High", "bold green"),
+    "LOW_IN_STOCK": ("Low", "bold yellow"),
+    "OUT_OF_STOCK": ("Unavailable", "bold red"),
 }
 _PROBABILITY_FALLBACK: tuple[str, str] = ("Unknown", "dim")
-_ZERO_STOCK_KEYS: frozenset[str] = frozenset({"OUT_OF_STOCK"})
+_RELIABILITY_DISPLAY: dict[str, tuple[str, str]] = {
+    "HIGH": ("High", "bold green"),
+    "LOW": ("Low", "bold yellow"),
+}
+_RELIABILITY_FALLBACK: tuple[str, str] = ("Unknown", "dim")
 
 
 class FinnbarApp(App[None]):
@@ -269,15 +274,39 @@ class FinnbarApp(App[None]):
             "Stock",
             "Availability",
             "Updated",
+            "Restock Period",
+            "Restock Quantity",
+            "Restock Reliability",
         )
-        for r in results:
-            avail_label, avail_color = _PROBABILITY_DISPLAY.get(r.probability, _PROBABILITY_FALLBACK)
+        for result in results:
+            avail_label, avail_color = _PROBABILITY_DISPLAY.get(result.probability, _PROBABILITY_FALLBACK)
+
+            restock_period = ""
+            restock_quantity = ""
+            restock_reliability: str | Text = ""
+
+            if result.restocks:
+                first_restock = result.restocks[0]
+
+                if first_restock.earliest_date and first_restock.latest_date and first_restock.earliest_date != first_restock.latest_date:
+                    restock_period = f"{first_restock.earliest_date} – {first_restock.latest_date}"
+                else:
+                    restock_period = first_restock.earliest_date or first_restock.latest_date
+
+                restock_quantity = str(first_restock.quantity) if first_restock.quantity else ""
+
+                if first_restock.reliability:
+                    rel_label, rel_color = _RELIABILITY_DISPLAY.get(first_restock.reliability, _RELIABILITY_FALLBACK)
+                    restock_reliability = Text(rel_label, style=rel_color)
 
             table.add_row(
-                r.product_id,
-                f"{r.country_code.upper()} – {r.country}",
-                r.store_name,
-                str(r.stock) if r.probability not in _ZERO_STOCK_KEYS else "0",
+                result.product_id,
+                f"{result.country_code.upper()} – {result.country}",
+                result.store_name,
+                str(result.stock) if result.probability not in _ZERO_STOCK_KEYS else "0",
                 Text(avail_label, style=avail_color),
-                r.updated_at,
+                result.updated_at,
+                restock_period,
+                restock_quantity,
+                restock_reliability,
             )
