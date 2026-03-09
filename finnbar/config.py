@@ -14,14 +14,17 @@ _ENCODING = "utf-8"
 @dataclass
 class Config:
     country_code: str | None = None
-    store: str | None = None
+    bu_code: str | None = None
     product_ids: list[str] = field(default_factory=list)
 
 
 def _save(cfg: Config) -> None:
     """Persist the given Config to disk."""
-    _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    _CONFIG_FILE.write_text(json.dumps(asdict(cfg), indent=2), encoding=_ENCODING)
+    try:
+        _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        _CONFIG_FILE.write_text(json.dumps(asdict(cfg), indent=2), encoding=_ENCODING)
+    except OSError:
+        pass
 
 
 def load() -> Config:
@@ -29,7 +32,7 @@ def load() -> Config:
     try:
         data = json.loads(_CONFIG_FILE.read_text(encoding=_ENCODING))
         return Config(**{k: v for k, v in data.items() if k in Config.__dataclass_fields__})
-    except (FileNotFoundError, json.JSONDecodeError, TypeError):
+    except (FileNotFoundError, TypeError, json.JSONDecodeError):
         return Config()
 
 

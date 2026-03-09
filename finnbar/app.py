@@ -55,6 +55,7 @@ class FinnbarApp(App[None]):
     ]
 
     _state: reactive[str] = reactive("idle")  # idle | loading | stock | error
+    _restoring: bool = False
 
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
@@ -106,17 +107,24 @@ class FinnbarApp(App[None]):
     def on_mount(self) -> None:
         """Populate store dropdown and restore last session from config."""
         cfg = config.load()
+        self._restoring = True
 
         country = cfg.country_code if cfg.country_code in _COUNTRY_CODES else _DEFAULT_COUNTRY_CODE
         self.query_one("#country-select", Select).value = country
         self._update_store_select(country)
 
-        if cfg.store:
-            self.query_one("#store-select", Select).value = cfg.store
+        if cfg.bu_code:
+            valid_bu_codes = {store.bu_code for store in api.get_stores(country)}
+            if cfg.bu_code in valid_bu_codes:
+                self.query_one("#store-select", Select).value = cfg.bu_code
 
         if cfg.product_ids:
             self.query_one("#product-input", Input).value = ", ".join(cfg.product_ids)
-            self._do_check_stock()
+
+        self._restoring = False
+
+        if cfg.product_ids:
+            self.call_later(self._do_check_stock)
 
     # ── Actions ────────────────────────────────────────────────────────
 
@@ -130,6 +138,9 @@ class FinnbarApp(App[None]):
 
     def on_select_changed(self, event: Select.Changed) -> None:
         """Repopulate the store dropdown whenever the country changes."""
+        if self._restoring:
+            return
+
         if event.select.id == "country-select" and event.value is not Select.NULL:
             self._update_store_select(str(event.value))
 
@@ -211,8 +222,9 @@ class FinnbarApp(App[None]):
     def _do_reset(self) -> None:
         config.reset()
 
+        self.query_one("#country-select", Select).value = _DEFAULT_COUNTRY_CODE
+        self._update_store_select(_DEFAULT_COUNTRY_CODE)
         self.query_one("#product-input", Input).clear()
-        self.query_one("#store-select", Select).clear()
         self._show_empty(
             "Select a country and store (optional),\n"
             "then enter a product ID and press\n"
@@ -229,7 +241,7 @@ class FinnbarApp(App[None]):
             return
         product_ids = self._product_ids()
         if not product_ids:
-            self.notify("Please enter at least one product id", severity="warning")
+            self.notify("Please enter at least one product ID", severity="warning")
             return
         bu_code = self._selected_store()
         # Capture the human-readable store name for display in no-results message
@@ -238,7 +250,7 @@ class FinnbarApp(App[None]):
             stores = api.get_stores(country)
             store_name = next((s.name for s in stores if s.bu_code == bu_code), None)
 
-        config.update(country_code=country, store=bu_code, product_ids=product_ids)
+        config.update(country_code=country, bu_code=bu_code, product_ids=product_ids)
 
         self._show_loading()
         self._fetch_stock(country, product_ids, bu_code, store_name)
