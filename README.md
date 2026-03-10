@@ -15,11 +15,53 @@ your terminal.
 - 📦 **Check stock** – look up real-time availability for one or more product IDs across all stores in a country
 - ⌨️ **Keyboard-driven** – full keyboard navigation with shortcut bindings
 
-## Requirements
+## Screenshots
 
-- Python 3.11+
+![FINNBAR stock search](docs/screenshot-stock.png)
 
 ## Installation
+
+### Standalone binary
+
+Pre-built binaries are available on the [Releases][releases] page.
+
+#### Linux
+
+1. Download `finnbar-linux-<version>` from the [Releases][releases] page
+2. Make it executable:
+   ```bash
+   chmod +x finnbar-linux-<version>
+   ```
+3. Run it:
+   ```bash
+   ./finnbar-linux-<version>
+   ```
+
+#### macOS
+
+1. Download `finnbar-macos-<version>` from the [Releases][releases] page
+2. Make it executable:
+   ```bash
+   chmod +x finnbar-macos-<version>
+   ```
+3. Remove the quarantine attribute applied by Gatekeeper:
+   ```bash
+   xattr -d com.apple.quarantine finnbar-macos-<version>
+   ```
+4. Run it:
+   ```bash
+   ./finnbar-macos-<version>
+   ```
+
+#### Windows
+
+1. Download `finnbar-windows-<version>.exe` from the [Releases][releases] page
+2. Run it from PowerShell or Command Prompt:
+   ```powershell
+   .\finnbar-windows-<version>.exe
+   ```
+
+### pipx (requires Python 3.11+)
 
 ```bash
 # Install the latest version
@@ -28,17 +70,6 @@ pipx install finnbar
 # Launch the TUI
 finnbar
 ```
-
-## Upgrading
-
-```bash
-# Upgrade to the latest version
-pipx upgrade finnbar
-```
-
-## Screenshots
-
-![FINNBAR idle state](docs/screenshot-idle.svg)
 
 ## Usage
 
@@ -55,5 +86,4 @@ pipx upgrade finnbar
 3. Enter one or more **product IDs** in the input field (comma-separated, e.g. `306.043.67, 10606640`)
 4. Press **Check Stock** or `Ctrl+K`
 
-Built with [Textual](https://github.com/Textualize/textual) and powered by
-the [ikea-availability-checker](https://github.com/Ephigenia/ikea-availability-checker) data.
+[releases]: https://github.com/fabieu/FINNBAR/releases
