@@ -52,6 +52,17 @@ class FinnbarApp(App[None]):
         Binding("ctrl+x", "clear", "Clear", show=True),
     ]
 
+    MAIN_AREA_ID = "main-area"
+    EMPTY_STATE_ID = "empty-state"
+    ERROR_STATE_ID = "error-state"
+
+    CHECK_STOCK_BTN_ID = "check-stock-btn"
+    CLEAR_BTN_ID = "clear-btn"
+
+    COUNTRY_SELECT_ID = "country-select"
+    STORE_SELECT_ID = "store-select"
+    PRODUCT_INPUT_ID = "product-input"
+
     _state: reactive[str] = reactive("idle")  # idle | loading | stock | error
 
     def compose(self) -> ComposeResult:
@@ -64,7 +75,7 @@ class FinnbarApp(App[None]):
                 yield Select(
                     _COUNTRY_OPTIONS,
                     prompt="Select country…",
-                    id="country-select",
+                    id=self.COUNTRY_SELECT_ID,
                     allow_blank=False,
                     value=_COUNTRY_OPTIONS[0][1],
                     compact=True,
@@ -74,7 +85,7 @@ class FinnbarApp(App[None]):
                 yield Select(
                     [],
                     prompt="All stores",
-                    id="store-select",
+                    id=self.STORE_SELECT_ID,
                     allow_blank=True,
                     compact=True,
                 )
@@ -82,19 +93,19 @@ class FinnbarApp(App[None]):
                 yield Label("Product ID(s)")
                 yield Input(
                     placeholder="306.043.67, 10606640",
-                    id="product-input",
+                    id=self.PRODUCT_INPUT_ID,
                 )
 
-                yield Button("Check Stock", id="check-stock-btn", variant="success")
-                yield Button("Clear", id="clear-btn")
+                yield Button("Check Stock", id=self.CHECK_STOCK_BTN_ID, variant="success")
+                yield Button("Clear", id=self.CLEAR_BTN_ID)
 
             # ── Main area ──────────────────────────────────────────────
-            with Container(id="main-area"):
+            with Container(id=self.MAIN_AREA_ID):
                 yield Static(
                     "Select a country and store (optional),\n"
                     "then enter a product ID and press\n"
                     "[b]Check Stock[/b] to view availability.",
-                    id="empty-state",
+                    id=self.EMPTY_STATE_ID,
                 )
 
         yield Footer()
@@ -108,41 +119,41 @@ class FinnbarApp(App[None]):
     # ── Actions ────────────────────────────────────────────────────────
 
     def action_check_stock(self) -> None:
-        self.query_one("#check-stock-btn", Button).press()
+        self.query_one(f"#{self.CHECK_STOCK_BTN_ID}", Button).press()
 
     def action_clear(self) -> None:
-        self.query_one("#clear-btn", Button).press()
+        self.query_one(f"#{self.CLEAR_BTN_ID}", Button).press()
 
     # ── Event handlers ─────────────────────────────────────────────────
 
     def on_select_changed(self, event: Select.Changed) -> None:
         """Repopulate the store dropdown whenever the country changes."""
-        if event.select.id == "country-select" and event.value is not Select.NULL:
+        if event.select.id == self.COUNTRY_SELECT_ID and event.value is not Select.NULL:
             self._update_store_select(str(event.value))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "check-stock-btn":
+        if event.button.id == self.CHECK_STOCK_BTN_ID:
             self._do_check_stock()
-        elif event.button.id == "clear-btn":
+        elif event.button.id == self.CLEAR_BTN_ID:
             self._do_clear()
 
     # ── Helpers ────────────────────────────────────────────────────────
 
     def _selected_country(self) -> str | None:
-        sel = self.query_one("#country-select", Select)
+        sel = self.query_one(f"#{self.COUNTRY_SELECT_ID}", Select)
         if sel.value is Select.NULL:
             return None
         return str(sel.value)
 
     def _selected_store(self) -> str | None:
         """Return selected store bu_code, or None for all stores."""
-        sel = self.query_one("#store-select", Select)
+        sel = self.query_one(f"#{self.STORE_SELECT_ID}", Select)
         if sel.value is Select.NULL:
             return None
         return str(sel.value)
 
     def _product_ids(self) -> list[str]:
-        raw = self.query_one("#product-input", Input).value.strip()
+        raw = self.query_one(f"#{self.PRODUCT_INPUT_ID}", Input).value.strip()
         if not raw:
             return []
         # Normalize: strip dots (e.g. 091.761.65 → 09176165)
@@ -160,43 +171,43 @@ class FinnbarApp(App[None]):
             (s.name, s.bu_code)
             for s in sorted(stores, key=lambda s: s.name)
         ]
-        self.query_one("#store-select", Select).set_options(options)
+        self.query_one(f"#{self.STORE_SELECT_ID}", Select).set_options(options)
 
     def _show_loading(self) -> None:
         """Replace main area content with a loading indicator."""
-        main = self.query_one("#main-area")
+        main = self.query_one(f"#{self.MAIN_AREA_ID}")
         main.remove_children()
         main.mount(LoadingIndicator())
 
     def _show_empty(self, message: str) -> None:
         """Show a centred informational message in the main area."""
-        main = self.query_one("#main-area")
-        existing = main.query("#empty-state")
+        main = self.query_one(f"#{self.MAIN_AREA_ID}")
+        existing = main.query(f"#{self.EMPTY_STATE_ID}")
         if existing:
             # Reuse the widget to avoid DuplicateIds — just remove siblings
-            for child in list(main.children):
-                if child.id != "empty-state":
+            for child in main.children:
+                if child.id != self.EMPTY_STATE_ID:
                     child.remove()
             existing.first(Static).update(message)
         else:
             main.remove_children()
-            main.mount(Static(message, id="empty-state"))
+            main.mount(Static(message, id=self.EMPTY_STATE_ID))
 
     def _show_error(self, message: str) -> None:
         """Show a centred error message in the main area."""
-        main = self.query_one("#main-area")
-        existing = main.query("#error-state")
+        main = self.query_one(f"#{self.MAIN_AREA_ID}")
+        existing = main.query(f"#{self.ERROR_STATE_ID}")
         if existing:
-            for child in list(main.children):
-                if child.id != "error-state":
+            for child in main.children:
+                if child.id != self.ERROR_STATE_ID:
                     child.remove()
             existing.first(Static).update(f"⚠️  {message}")
         else:
             main.remove_children()
-            main.mount(Static(f"⚠️  {message}", id="error-state"))
+            main.mount(Static(f"⚠️  {message}", id=self.ERROR_STATE_ID))
 
     def _do_clear(self) -> None:
-        self.query_one("#product-input", Input).value = ""
+        self.query_one(f"#{self.PRODUCT_INPUT_ID}", Input).value = ""
         self._show_empty(
             "Select a country and store (optional),\n"
             "then enter a product ID and press\n"
@@ -252,7 +263,7 @@ class FinnbarApp(App[None]):
             product_ids: list[str],
             store_name: str | None,
     ) -> None:
-        main = self.query_one("#main-area")
+        main = self.query_one(f"#{self.MAIN_AREA_ID}")
         main.remove_children()
 
         if not results:
