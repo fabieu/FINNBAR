@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "finnbar"
-version = "0.3.0"
+version = "0.3.1"
 description = "FINNBAR – a TUI for checking IKEA product availability in your local store, straight from your terminal."
 authors = ["fabieu <43068791+fabieu@users.noreply.github.com>"]
 license = "MIT"
