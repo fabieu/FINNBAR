@@ -1,5 +1,22 @@
 # FINNBAR
 
+[![GitHub Release](https://img.shields.io/github/v/release/fabieu/FINNBAR)](https://github.com/fabieu/FINNBAR/releases/latest)
+[![GitHub Issues](https://img.shields.io/github/issues/fabieu/FINNBAR)](https://github.com/fabieu/FINNBAR/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/fabieu/FINNBAR)](https://github.com/fabieu/FINNBAR/pulls)
+[![License](https://img.shields.io/github/license/fabieu/FINNBAR)](https://github.com/fabieu/FINNBAR/blob/main/LICENSE)
+
+[![PyPI Version](https://img.shields.io/pypi/v/finnbar)](https://pypi.org/project/finnbar/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/finnbar)](https://pypi.org/project/finnbar/)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=alert_status)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=security_rating)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=reliability_rating)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=fabieu_FINNBAR&metric=sqale_index)](https://sonarcloud.io/summary/overall?id=fabieu_FINNBAR)
+
+---
+
 **FINNBAR** - a TUI for browsing and checking real-time IKEA product availability across your local stores, without
 leaving the terminal.
 
@@ -17,7 +34,7 @@ your terminal.
 
 ## Screenshots
 
-![FINNBAR stock search](docs/screenshot-stock.png)
+![FINNBAR stock search](https://raw.githubusercontent.com/fabieu/FINNBAR/main/docs/screenshot-stock.png)
 
 ## Installation
 
