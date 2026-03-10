@@ -32,15 +32,3 @@ updates:
     groups:
       gh-actions-dependencies:
         patterns: [ "*" ]
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-      time: "07:00"
-    labels:
-      - "dependencies"
-    assignees:
-      - "fabieu"
-    groups:
-      docker-dependencies:
-        patterns: [ "*" ]
