@@ -23,6 +23,14 @@ class RestockInfo:
 
 
 @dataclass
+class CashCarryAvailability:
+    stock: int
+    probability: str
+    updated_at: str
+    restocks: list[RestockInfo] = field(default_factory=list)
+
+
+@dataclass
 class StockInfo:
     product_id: str
     bu_code: str
