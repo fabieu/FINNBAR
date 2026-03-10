@@ -3,6 +3,10 @@ name: Build and publish
 on:
   workflow_dispatch:
 
+env:
+  PYTHON_VERSION: "3.14"
+  POETRY_VERSION: "2.2.1"
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -11,8 +15,6 @@ jobs:
   set-version:
     name: Set version info
     runs-on: ubuntu-latest
-    container:
-      image: python:3.14-slim
     timeout-minutes: 5
     permissions:
       contents: read
@@ -22,8 +24,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Install poetry
-        run: pip install poetry==${{ vars.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Save version to output
         id: version
@@ -37,10 +44,6 @@ jobs:
   build:
     name: Build package
     runs-on: ubuntu-latest
-    container:
-      image: python:3.14-slim
-    needs:
-      - set-version
     permissions:
       contents: read
     timeout-minutes: 15
@@ -48,8 +51,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
       - name: Install poetry
-        run: pip install poetry==${{ vars.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Configure poetry
         run: poetry config virtualenvs.create false
@@ -85,6 +93,72 @@ jobs:
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
+  build-binaries:
+    name: Build binary (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs:
+      - set-version
+    permissions:
+      contents: read
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            binary: finnbar
+            artifact: finnbar-linux
+            extension: ""
+          - os: macos-latest
+            binary: finnbar
+            artifact: finnbar-macos
+            extension: ""
+          - os: windows-latest
+            binary: finnbar.exe
+            artifact: finnbar-windows
+            extension: ".exe"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install poetry
+        run: pip install poetry==${{ env.POETRY_VERSION }}
+
+      - name: Configure poetry
+        run: poetry config virtualenvs.create false
+
+      - name: Install project dependencies
+        run: poetry install --no-interaction --with build
+
+      - name: Build binary
+        shell: bash
+        run: |
+          pyinstaller \
+            --onefile \
+            --name finnbar \
+            --collect-all textual \
+            --add-data "finnbar/app.tcss:finnbar" \
+            --add-data "finnbar/stores.json:finnbar" \
+            finnbar/__main__.py
+
+      - name: Set binary name
+        shell: bash
+        run: echo "BINARY_NAME=${{ matrix.artifact }}-${{ needs.set-version.outputs.version }}${{ matrix.extension }}" >> $GITHUB_ENV
+
+      - name: Rename binary
+        shell: bash
+        run: mv dist/${{ matrix.binary }} dist/${{ env.BINARY_NAME }}
+
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.BINARY_NAME }}
+          path: dist/${{ env.BINARY_NAME }}
+
 
   create-release:
     name: Create release
@@ -92,10 +166,18 @@ jobs:
     needs:
       - set-version
       - publish
+      - build-binaries
     timeout-minutes: 5
     permissions:
       contents: write
     steps:
+      - name: Download binaries
+        uses: actions/download-artifact@v8
+        with:
+          pattern: finnbar-*
+          path: binaries/
+          merge-multiple: true
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
@@ -103,3 +185,4 @@ jobs:
           tag_name: ${{ needs.set-version.outputs.version }}
           target_commitish: ${{ github.sha }}
           generate_release_notes: true
+          files: binaries/*
