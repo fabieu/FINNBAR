@@ -8,8 +8,8 @@ readme = "README.md"
 packages = [{ include = "finnbar" }]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-textual = "^8.0.0"
+python = ">=3.11, <3.15"
+textual = "^8.1.0"
 requests = "^2.31.0"
 
 [tool.poetry.scripts]
@@ -18,3 +18,8 @@ finnbar = "finnbar.__main__:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+build = [
+    "pyinstaller (>=6.19.0,<7.0.0)"
+]
