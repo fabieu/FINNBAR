@@ -19,7 +19,7 @@ from textual.widgets import (
     Static,
 )
 
-from finnbar import api
+from finnbar import __version__, api
 from finnbar.render import StockResult, build_stock_result
 
 _COUNTRY_OPTIONS: list[tuple[str, str]] = [
@@ -32,7 +32,7 @@ class FinnbarApp(App[None]):
     """FINNBAR – IKEA availability checker TUI."""
 
     TITLE = "FINNBAR"
-    SUB_TITLE = "IKEA Availability Checker"
+    SUB_TITLE = f"IKEA Availability Checker v{__version__}"
     CSS_PATH = "app.tcss"
     BINDINGS = [
         Binding("ctrl+q", "quit", "Quit"),
